@@ -1,4 +1,3 @@
-```js
 // Render deployment update
 
 const express = require('express');
@@ -136,25 +135,20 @@ app.get('/api/sessions', (req, res) => {
   res.json(result);
 });
 
-// Homepage
 app.get('/', (req, res) => {
   res.sendFile(__dirname + '/public/index.html');
 });
 
-// Recipient page
 app.get('/r/:id', (req, res) => {
   res.sendFile(__dirname + '/public/recipient.html');
 });
 
-// Dashboard page
 app.get('/dashboard', (req, res) => {
   res.sendFile(__dirname + '/public/dashboard.html');
 });
 
-// Start server
 app.listen(PORT, '0.0.0.0', function() {
   console.log(
     'Consent Information Gathering Demo running on port ' + PORT
   );
 });
-```
