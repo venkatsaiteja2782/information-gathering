@@ -1,4 +1,3 @@
-```js
 // Render deployment update
 
 const express = require('express');
@@ -21,7 +20,7 @@ app.post('/api/generate-link', (req, res) => {
   const id = makeId();
 
   sessions.set(id, {
-    id,
+    id: id,
     createdAt: new Date().toISOString(),
     status: 'Waiting for recipient',
     ip: null,
@@ -32,11 +31,12 @@ app.post('/api/generate-link', (req, res) => {
     lastUpdated: null
   });
 
-  const base = `${req.protocol}://${req.get('host')}`;
+  // No backticks used here
+  const base = req.protocol + '://' + req.get('host');
 
   res.json({
-    id,
-    link: `${base}/r/${id}`
+    id: id,
+    link: base + '/r/' + id
   });
 });
 
@@ -49,27 +49,30 @@ app.post('/api/consent/:id', (req, res) => {
     });
   }
 
-  const {
-    locationAllowed = false,
-    cameraAllowed = false
-  } = req.body || {};
+  const locationAllowed = req.body.locationAllowed || false;
+  const cameraAllowed = req.body.cameraAllowed || false;
 
   s.consent = true;
   s.ip = req.ip || req.socket.remoteAddress || 'Unavailable';
 
-  s.location =
-    locationAllowed && req.body.location
-      ? req.body.location
-      : null;
+  if (locationAllowed && req.body.location) {
+    s.location = req.body.location;
+  } else {
+    s.location = null;
+  }
 
-  s.camera = cameraAllowed
-    ? 'Access Granted (local preview only)'
-    : 'Denied / Not granted';
+  if (cameraAllowed) {
+    s.camera = 'Access Granted (local preview only)';
+  } else {
+    s.camera = 'Denied / Not granted';
+  }
 
   s.status = 'Information received with consent';
   s.lastUpdated = new Date().toISOString();
 
-  res.json({ ok: true });
+  res.json({
+    ok: true
+  });
 });
 
 app.post('/api/snapshot/:id', (req, res) => {
@@ -108,7 +111,9 @@ app.post('/api/snapshot/:id', (req, res) => {
   s.camera = 'Access Granted + Snapshot submitted';
   s.lastUpdated = new Date().toISOString();
 
-  res.json({ ok: true });
+  res.json({
+    ok: true
+  });
 });
 
 app.get('/api/session/:id', (req, res) => {
@@ -124,12 +129,11 @@ app.get('/api/session/:id', (req, res) => {
 });
 
 app.get('/api/sessions', (req, res) => {
-  res.json(
-    Array.from(sessions.values()).sort(
-      (a, b) =>
-        new Date(b.createdAt) - new Date(a.createdAt)
-    )
-  );
+  const result = Array.from(sessions.values()).sort(function(a, b) {
+    return new Date(b.createdAt) - new Date(a.createdAt);
+  });
+
+  res.json(result);
 });
 
 app.get('/r/:id', (req, res) => {
@@ -140,9 +144,8 @@ app.get('/dashboard', (req, res) => {
   res.sendFile(__dirname + '/public/dashboard.html');
 });
 
-app.listen(PORT, '0.0.0.0', () => {
+app.listen(PORT, '0.0.0.0', function() {
   console.log(
-    `Consent Information Gathering Demo running on port ${PORT}`
+    'Consent Information Gathering Demo running on port ' + PORT
   );
 });
-```
