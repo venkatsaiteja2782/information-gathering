@@ -1,4 +1,6 @@
 ```js
+// Render deployment update
+
 const express = require('express');
 const cors = require('cors');
 const crypto = require('crypto');
@@ -42,7 +44,9 @@ app.post('/api/consent/:id', (req, res) => {
   const s = sessions.get(req.params.id);
 
   if (!s) {
-    return res.status(404).json({ error: 'Session not found' });
+    return res.status(404).json({
+      error: 'Session not found'
+    });
   }
 
   const {
@@ -72,7 +76,9 @@ app.post('/api/snapshot/:id', (req, res) => {
   const s = sessions.get(req.params.id);
 
   if (!s) {
-    return res.status(404).json({ error: 'Session not found' });
+    return res.status(404).json({
+      error: 'Session not found'
+    });
   }
 
   if (s.camera !== 'Access Granted (local preview only)') {
