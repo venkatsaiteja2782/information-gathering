@@ -1,3 +1,4 @@
+```js
 // Render deployment update
 
 const express = require('express');
@@ -31,7 +32,6 @@ app.post('/api/generate-link', (req, res) => {
     lastUpdated: null
   });
 
-  // No backticks used here
   const base = req.protocol + '://' + req.get('host');
 
   res.json({
@@ -136,16 +136,25 @@ app.get('/api/sessions', (req, res) => {
   res.json(result);
 });
 
+// Homepage
+app.get('/', (req, res) => {
+  res.sendFile(__dirname + '/public/index.html');
+});
+
+// Recipient page
 app.get('/r/:id', (req, res) => {
   res.sendFile(__dirname + '/public/recipient.html');
 });
 
+// Dashboard page
 app.get('/dashboard', (req, res) => {
   res.sendFile(__dirname + '/public/dashboard.html');
 });
 
+// Start server
 app.listen(PORT, '0.0.0.0', function() {
   console.log(
     'Consent Information Gathering Demo running on port ' + PORT
   );
 });
+```
